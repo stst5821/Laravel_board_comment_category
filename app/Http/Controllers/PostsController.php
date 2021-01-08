@@ -19,16 +19,21 @@ class PostsController extends Controller
         $categories = $category->getLists();
 
         $category_id = $request->category_id;
+        
+        // 検索ワード取得
+        $searchword = $request->searchword;
 
         // scopeを利用した検索
         $posts = Post::orderBy('created_at', 'desc')
         ->categoryAt($category_id) // ←★これ
+        ->fuzzyNameMessage($searchword) // ←★変更
         ->paginate(10);
-    
+
         return view('bbs.index', [
             'posts' => $posts, 
             'categories' => $categories, 
-            'category_id'=>$category_id
+            'category_id'=>$category_id,
+            'searchword' => $searchword // ←★追加
         ]);
     }
 
